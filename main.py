@@ -1,0 +1,1 @@
+# Copyright (c) 2021 Lightricks. All rights reserved.
