@@ -1,9 +1,14 @@
 # Copyright (c) 2021 Lightricks. All rights reserved.
 from Game import Game
+from GameMethod import DummyMethod, HTTPSMethod, EmptyMethod
+from GameUI import TerminalUI
 
 
 def main():
-    game = Game()
+    ui = TerminalUI()
+    #method = HTTPSMethod()
+    method = EmptyMethod()
+    game = Game(ui, method)
     game.operate_game()
 
 
