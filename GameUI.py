@@ -3,7 +3,7 @@ import re
 from abc import ABC, abstractmethod
 
 
-class GAME_UI(ABC):
+class GameUI(ABC):
     DISPLAY_DICT = {'guess_success': 0, 'guess_failure': 1, 'hint': 2, 'solution': 3}
 
     @abstractmethod
@@ -24,7 +24,7 @@ class GAME_UI(ABC):
 
 
 # Inheritances of UI
-class TerminalUI(GAME_UI):
+class TerminalUI(GameUI):
     INSTRUCTIONS = "For guessing a letter enter one, for a hint enter H, for the solution enter S" \
                    "\n "
     WELCOME_MESSAGE = "Hello and Welcome to the best hangman game ever. \n"
@@ -62,32 +62,50 @@ class TerminalUI(GAME_UI):
         return user_input
 
     def display_response(self, response):
-        response_mode = response[0]
+        response_mode = response.current_mode
         if response[-1]:
             unique_message = "You already guessed this letter. \n" \
-                             " There are {} more guesses left".format(response[2])
+                             " There are {} more guesses left".format(response.guesses_left)
         elif response_mode == TerminalUI.DISPLAY_DICT['guess_success']:
             unique_message = "GOOD JOB!! \n" \
-                             " Current word" + str(response[1]) \
-                             + " There are {} more guesses left".format(response[2])
+                             " Current word" + str(response.output) \
+                             + " There are {} more guesses left".format(response.guesses_left)
         elif response_mode == TerminalUI.DISPLAY_DICT['guess_failure']:
             self.current_display = self.stages_display.pop(0)
             if not self.current_display:
                 self.current_display = TerminalUI.HANGEDMAN
-            unique_message = "WRONG !! \n Current word" + str(response[1]) + \
-                             " There are {} more guesses left".format(response[2])
+            unique_message = "WRONG !! \n Current word" + str(response.output) + \
+                             " There are {} more guesses left".format(response.guesses_left)
         elif response_mode == TerminalUI.DISPLAY_DICT['hint']:
-            unique_message = "The hint is :", response[1]
+            unique_message = "The hint is :", response.output
+        elif response_mode == TerminalUI.DISPLAY_DICT['solution']:
+            unique_message = "The solution ", response.output
         else:
-            unique_message = "The solution ", response[1]
+            unique_message = "That was an invalid guess. Try again."
 
         for line in self.current_display:
             print(line)
         print(unique_message)
+        return unique_message
 
     def end_UI(self):
         print(TerminalUI.BYE_MESSAGE)
         return
+
+
+class TestUI(GameUI):
+
+    def initialize_UI(self):
+        return TerminalUI.WELCOME_MESSAGE
+
+    def get_instructions(self):
+        return TerminalUI.INSTRUCTIONS
+
+    def display_response(self, response):
+        return response
+
+    def end_UI(self):
+        return TerminalUI.BYE_MESSAGE
 
 
 def create_stages():
