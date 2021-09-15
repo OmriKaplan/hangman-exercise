@@ -39,13 +39,17 @@ class HTTPSMethod(GameMethod):
     PATH = "https://hangman-api.herokuapp.com/hangman"
     HINT_PATH = PATH + "/hint"
 
-    def __init__(self):
-        self.start = requests.post(HTTPSMethod.PATH).json()
-        self.hangman_string, self.game_token = self.start['hangman'], self.start['token']
+    def __init__(self, connection):
+        self.connection = connection
+        self.hangman_string = ''
+        self.game_token = ''
         self.guesses_left = 6
         self.asked_for_solution = False
 
     def initialize_method(self):
+        start = self.connection.call_init()
+        self.hangman_string = start['hangman']
+        self.game_token = start['token']
         return self.hangman_string
 
     def is_game_finished(self):
@@ -90,6 +94,18 @@ class HTTPSMethod(GameMethod):
         else:
             current_state = GameState(GameMethod.RESPONSE_DICT['invalid'], self.hangman_string, self.guesses_left, already_guessed)
             return current_state
+
+
+class HTTPConnection:
+    """
+    Represents a connection to the remote Hangman server
+    """
+    def __init__(self, path):
+        self.path = path
+
+    def call_init():
+        response = requests.post(self.path)  # todo: handle errors
+        return response.json()
 
 
 def update_string(hangman_string, solution, user_input):
