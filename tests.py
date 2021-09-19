@@ -6,6 +6,7 @@ from Game import Game
 from GameMethod import DummyMethod, HTTPSMethod, EmptyMethod, GameMethod
 from GameUI import TerminalUI, TestUI
 import requests
+import pytest
 
 # CONSTANTS
 INSTRUCTIONS = "For guessing a letter enter one, for a hint enter H, for the solution enter S" \
@@ -99,6 +100,7 @@ class TestClassCheckAPI(unittest.TestCase):
         response = requests.put(self.url, data={'token': game_token, 'letter': 'l'})
         assert response.status_code == 304
 
+    @pytest.mark.skip
     def test_invalid_guess(self):
         response = requests.put(self.url, data={'token': self.game_token, 'letter': 'dl'})
         assert response.status_code != 200
@@ -134,6 +136,7 @@ class TestClassGame(unittest.TestCase):
         self.test_game_https = Game(self.test_terminal_ui, self.test_https)
         self.test_games = [self.test_game_https, self.test_game_empty]
 
+    @pytest.mark.skip
     def test_integration(self):
         """ Checks if an empty victory works as expected """
         for test_index, test_game in enumerate(self.test_games[1:]):

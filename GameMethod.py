@@ -47,7 +47,7 @@ class HTTPSMethod(GameMethod):
         self.asked_for_solution = False
 
     def initialize_method(self):
-        start = self.connection.call_init()
+        start = self.connection.init_game()
         self.hangman_string = start['hangman']
         self.game_token = start['token']
         return self.hangman_string
@@ -103,7 +103,7 @@ class HTTPConnection:
     def __init__(self, path):
         self.path = path
 
-    def call_init():
+    def init_game():
         response = requests.post(self.path)  # todo: handle errors
         return response.json()
 
